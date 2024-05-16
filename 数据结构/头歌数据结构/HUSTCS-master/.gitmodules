@@ -1,0 +1,24 @@
+[submodule "计算机网络实验"]
+	path = 计算机网络实验
+	url = git@github.com:HUSTERGS/Computer_Network.git
+[submodule "软件工程"]
+	path = 软件工程
+	url = git@github.com:HUSTERGS/SoftwareEngineeringProject.git
+[submodule "函数式编程"]
+	path = 函数式编程
+	url = git@github.com:HUSTERGS/SML_HUST.git
+[submodule "Java课程实验"]
+	path = Java课程实验
+	url = git@github.com:HUSTERGS/Java_HUST.git
+[submodule "数据库系统原理实验"]
+	path = 数据库系统原理实验
+	url = git@github.com:HUSTERGS/Database_HUST.git
+[submodule "机器学习"]
+	path = 机器学习
+	url = git@github.com:HUSTERGS/ML_HUST.git
+[submodule "CSP-Python"]
+	path = CSP-Python
+	url = https://github.com/HUSTERGS/CSP
+[submodule "系统能力综合训练-虚拟机-riscv"]
+	path = 系统能力综合训练-虚拟机-riscv
+	url = git@github.com:HUSTERGS/PA.git

@@ -1,0 +1,1183 @@
+#include"../def.h"
+#include"../二叉树-按层遍历.h"
+#include"../二叉树-插入.h"
+#include"../二叉树-创建.h"
+#include"../二叉树-查找.h"
+#include"../二叉树-查找兄弟节点.h"
+#include"../二叉树-后序遍历.h"
+#include"../二叉树-节点赋值.h"
+#include"../二叉树-清空.h"
+#include"../二叉树-求深度.h"
+#include"../二叉树-删除.h"
+#include"../二叉树-文件操作.h"
+#include"../二叉树-先序遍历.h"
+#include"../二叉树-非递归中序遍历.h"
+#include"../附加功能/二叉树-翻转.h"
+#include"../附加功能/二叉树-最大路径和.h"
+#include"../附加功能/二叉树-最近公共祖先.h"
+#include"../附加功能/多二叉树管理.h"
+#include"../附加功能/二叉树-图形化遍历.h"
+int main()
+{
+int i=0,j=0,op1=1,op2=0,op3=0,sign=0,n=0,ret=0;
+BiTree T=NULL;
+BiTNode*node=NULL;
+TElemType newval;
+TElemType e1,e2;
+TElemType def[MAX_SIZE];
+BiTrees tree_table;
+//tree_table.trees=NULL;
+char name[20];
+while(op1)
+{
+	system("cls");	printf("\n\n");
+	printf("      以二叉链表实现的二叉树菜单 \n");
+	printf("-------------------------------------------------\n");
+	printf("    	  1. 初始化二叉树       9. 先序遍历\n");
+	printf("    	  2. 清空二叉树         10. 中序遍历\n");
+	printf("    	  3. 求二叉树的深度     11. 后序遍历 \n");
+	printf("    	  4. 查找节点           12. 按层遍历\n");
+	printf("    	  5. 节点赋值           13. 翻转二叉树\n");
+	printf("    	  6. 获取兄弟节点       14. 最大路径和\n");
+	printf("    	  7. 插入节点           15. 最近公共祖先\n");
+	printf("    	  8. 删除节点           16. 二叉树的文件操作\n");
+	printf("    	  0. 退出\n");
+	printf("-------------------------------------------------\n");
+	printf("    请选择你的操作[0~16]:");
+	scanf("%d",&op1);
+	if(op1<0||op1>16)
+	{
+		printf("Invalid Input!\n");
+		system("pause");
+		exit(-1);
+	}
+	printf("请问您是否需要先创建若干个二叉树？(本操作会测评多二叉树管理的插入)(本操作会覆盖掉已有的二叉树)是：1，否：0\n");
+	scanf("%d",&op2);
+	if(op2!=1&&op2!=0)
+	{
+		printf("Invalid Input!\n");
+		system("pause");
+		exit(-1);
+	}
+	if(op2==1)//创建二叉树的管理表。 
+	{
+		DestroyBiTrees(tree_table); 
+		//tree_table.trees=NULL;
+		InitBiTrees(tree_table);
+		printf("请输入您需要创建的二叉树的个数。\n"); 
+		scanf("%d",&n); 
+		for(j=0;j<n;j++)
+		{
+			printf("请输入您给这棵二叉树起的名字。\n");
+			scanf("%s",&name);
+			printf("您输入的名字是%s。\n",name);
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("正在保存这个二叉树...\n");
+				sign=AddBiTree(tree_table,T,name);
+				if(sign==OK)
+				{
+					printf("二叉树保存成功！\n");
+					T=NULL;
+				}
+				else
+				{
+					printf("二叉树保存失败！\n");
+					ClearBiTree(T);
+				}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+		}
+	}
+    switch(op1)
+	{
+	   case 1://创建二叉树。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3!=1)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			printf("正在创建二叉树...\n"); 
+
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("创建成功！\n");
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+		}
+		ClearBiTree(T);
+		getchar();getchar();
+		break;
+	   case 2://清空二叉树。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。(本操作会测评多二叉树管理的查找和删除，以下同理。)\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("正在清空二叉树...\n");
+				ClearBiTree(T);
+				printf("二叉树清空成功。\n");
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("正在清空二叉树...\n");
+			ClearBiTree(T);
+			printf("二叉树清空成功！\n");
+			printf("正在从管理表中删除...\n");
+			sign=DeleteBiTree(tree_table,name);
+			if(sign==OK){printf("删除成功！\n");}
+			else{printf("删除失败！\n");}
+			printf("本次测评结束。\n");
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 3://求二叉树的深度。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("正在求二叉树的深度...\n");
+				ret=BiTreeDepth(T);
+				printf("二叉树的深度是%d。\n",ret);
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("正在求二叉树的深度...\n");
+			ret=BiTreeDepth(T);
+			printf("二叉树的深度是%d。\n",ret);
+			printf("本次测评结束。\n"); 
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 4://查找节点。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("请输入要查找节点的关键字。\n");
+				scanf("%d",&i);
+				printf("正在查找节点...\n");
+				node=LocateNode(T,i);
+				if(node==NULL){printf("未找到节点！\n");}
+				else{printf("节点的名称是%s。\n",node->data.others);}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			node=NULL;
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("请输入要查找节点的关键字。\n");
+			scanf("%d",&i);
+			printf("正在查找节点...\n");
+			node=LocateNode(T,i);
+			if(node==NULL){printf("未找到节点！\n");}
+			else{printf("节点的名称是%s。\n",node->data.others);}
+			printf("本次测评结束。\n"); 
+			node=NULL;
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 5://节点赋值。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("请输入要赋值节点的key。\n"); 
+				scanf("%d",&i);
+				printf("请输入新的值，格式：节点关键字 节点名称。\n");
+				scanf("%d %s",&newval.key,&newval.others);
+				printf("正在进行节点赋值...\n");
+				sign=Assign(T,i,newval);
+				if(sign==OK)
+				{
+					printf("节点赋值成功！\n");
+					printf("赋值后的二叉树如下：\n");
+					UITraverse(T);
+				}
+				else{printf("名称重复或未找到！\n");}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("请输入要赋值节点的key。\n"); 
+			scanf("%d",&i);
+			printf("请输入新的值，格式：节点关键字 节点名称。\n");
+			scanf("%d %s",&newval.key,&newval.others);
+			printf("正在进行节点赋值...\n");
+			sign=Assign(T,i,newval);
+			if(sign==OK)
+			{
+				printf("节点赋值成功！\n");
+				printf("赋值后的二叉树如下：\n");
+				UITraverse(T);
+			}
+			else{printf("名称重复或未找到！\n");}
+			printf("本次测评结束。\n"); 
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 6://获取兄弟节点。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("请输入进行查找兄弟节点的节点的key。\n");
+				scanf("%d",&i);
+				printf("正在查找节点...\n");
+				node=GetSibling(T,i);
+				if(node==NULL){printf("无兄弟节点！\n");} 
+				else{printf("兄弟节点的关键字和名称是%d %s。\n",node->data.key,node->data.others);}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			node=NULL;
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("请输入进行查找兄弟节点的节点的key。\n");
+			scanf("%d",&i);
+			printf("正在查找节点...\n");
+			node=GetSibling(T,i);
+			if(node==NULL){printf("无兄弟节点！\n");} 
+			else{printf("兄弟节点的关键字和名称是%d %s。\n",node->data.key,node->data.others);}
+			printf("本次测评结束。\n"); 
+			node=NULL;
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 7://插入节点。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("请输入作为插入位置的节点的key。\n");
+				scanf("%d",&i);
+				printf("请选择希望待插入节点成为上述节点的左孩子还是右孩子。左：0 右：1");
+				scanf("%d",&j);
+				printf("请输入待插入节点的值，格式：节点关键字 节点名称。\n");
+				scanf("%d %s",&newval.key,&newval.others);
+				printf("正在插入...\n");
+				sign=InsertNode(T,i,j,newval);
+				if(sign==OK)
+				{
+					printf("插入成功！\n");
+					printf("插入后的二叉树如下：\n");
+					UITraverse(T);
+				}
+				else{printf("节点未找到或名称重复！\n");} 
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("请输入作为插入位置的节点的key。\n");
+			scanf("%d",&i);
+			printf("请选择希望待插入节点成为上述节点的左孩子还是右孩子。左：0 右：1");
+			scanf("%d",&j);
+			printf("请输入待插入节点的值，格式：节点关键字 节点名称。\n");
+			scanf("%d %s",&newval.key,&newval.others);
+			printf("正在插入...\n");
+			sign=InsertNode(T,i,j,newval);
+			if(sign==OK)
+			{
+				printf("插入成功！\n");
+				printf("插入后的二叉树如下：\n");
+				UITraverse(T);
+			}
+			else{printf("节点未找到或名称重复！\n");} 
+			printf("本次测评结束。\n");
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 8://删除节点。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("请输入要删除节点的key。\n");
+				scanf("%d",&i);
+				printf("正在删除节点...\n");
+				sign=DeleteNode(T,i);
+				if(sign==OK)
+				{
+					printf("节点删除成功！\n");
+					printf("删除后的二叉树如下：\n");
+					UITraverse(T);
+				}
+				else{printf("未找到节点！\n");}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("请输入要删除节点的key。\n");
+			scanf("%d",&i);
+			printf("正在删除节点...\n");
+			sign=DeleteNode(T,i);
+			if(sign==OK)
+			{
+				printf("节点删除成功！\n");
+				printf("删除后的二叉树如下：\n");
+				UITraverse(T);
+			}
+			else{printf("未找到节点！\n");}
+			printf("本次测评结束。\n");
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 9://先序遍历。 
+	    printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				if(T==NULL){printf("空树！\n");}
+				else
+				{
+					printf("正在进行先序遍历...\n");
+					PreOrderTraverse(T,visit);
+					printf("\n"); 
+				}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			if(T==NULL){printf("空树！\n");}
+			else
+			{
+				printf("正在进行先序遍历...\n");
+				PreOrderTraverse(T,visit);
+				printf("\n"); 
+			}
+			printf("本次测评结束。\n"); 
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 10://中序遍历。
+	    printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				if(T==NULL){printf("空树！\n");}
+				else
+				{
+					printf("正在进行中序遍历...\n");
+					InOrderTraverseNoRecursion(T,visit);
+					printf("\n"); 
+				}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			if(T==NULL){printf("空树！\n");}
+			else
+			{
+				printf("正在进行中序遍历...\n");
+				InOrderTraverseNoRecursion(T,visit);
+				printf("\n"); 
+			}
+			printf("本次测评结束。\n"); 
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 11://后序遍历。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				if(T==NULL){printf("空树！\n");}
+				else
+				{
+					printf("正在进行后序遍历...\n");
+					PostOrderTraverse(T,visit); 
+					printf("\n");
+				}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			if(T==NULL){printf("空树！\n");}
+			else
+			{
+				printf("正在进行后序遍历...\n");
+				PostOrderTraverse(T,visit); 
+				printf("\n");
+			}
+			printf("本次测评结束。\n"); 
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 12://按层遍历。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				if(T==NULL){printf("空树！\n");}
+				else
+				{
+					printf("正在进行按层遍历...\n");
+					LevelOrderTraverse(T,visit);
+					printf("\n"); 
+				}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			if(T==NULL){printf("空树！\n");}
+			else
+			{
+				printf("正在进行按层遍历...\n");
+				LevelOrderTraverse(T,visit);
+				printf("\n"); 
+			}
+			printf("本次测评结束。\n"); 
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 13://翻转二叉树。 
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("正在进行二叉树翻转...\n");
+				if(T==NULL){printf("空树！\n");}
+				else
+				{
+					InvertTree(T);
+					printf("二叉树翻转成功！"); 
+					printf("翻转的二叉树如下：\n");
+					UITraverse(T);
+				}
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("正在进行二叉树翻转...\n");
+			if(T==NULL){printf("空树！\n");}
+			else
+			{
+				InvertTree(T);
+				printf("二叉树翻转成功！"); 
+				printf("翻转的二叉树如下：\n");
+				UITraverse(T);
+			}
+			printf("本次测评结束。\n"); 
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 14://最大路径和。
+	    printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("正在求最大路径和...\n");
+				ret=MaxPathSum(T);
+				printf("最大路径和是%d。\n",ret);
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("正在求最大路径和...\n");
+			ret=MaxPathSum(T);
+			printf("最大路径和是%d。\n",ret);
+			printf("本次测评结束。\n");
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 15://最近公共祖先。
+	    printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点编号 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("请输入节点1的值，格式：节点关键字 节点名称。\n");
+				scanf("%d %s",&e1.key,&e1.others);
+				printf("请输入节点2的值，格式：节点关键字 节点名称。\n");
+				scanf("%d %s",&e2.key,&e2.others);
+				printf("正在求最近公共祖先...\n");
+				node=LowestCommonAncestor(T,e1,e2);
+				if(node!=NULL){printf("最近公共祖先是%d %s。\n",node->data.key,node->data.others);}
+				else{printf("最近公共祖先未找到！\n");} 
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			node=NULL;
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("请输入节点1的值，格式：节点关键字 节点名称。\n");
+			scanf("%d %s",&e1.key,&e1.others);
+			printf("请输入节点2的值，格式：节点关键字 节点名称。\n");
+			scanf("%d %s",&e2.key,&e2.others);
+			printf("正在求最近公共祖先...\n");
+			node=LowestCommonAncestor(T,e1,e2);
+			if(node!=NULL){printf("最近公共祖先是%d %s。\n",node->data.key,node->data.others);}
+			else{printf("最近公共祖先未找到！\n");} 
+			printf("本次测评结束。\n"); 
+			node=NULL;
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 16://二叉树文件操作。
+		printf("请问您要如何测试这个函数？\n");
+		printf("1.手动输入数据。\n2.从已有二叉树中选择。\n"); 
+		printf("请选择。\n");
+		scanf("%d",&op3);
+		if(op3<=0||op3>2)
+		{
+			printf("Invalid Input!");
+			break;
+		}
+		if(op3==1)//手动输入数据。 
+		{
+			printf("请您输入数据。格式：节点关键字 节点名称。空节点：0 任意字符串。输入结束符：-1 任意字符串。\n");
+			i=0;
+			do
+			{
+				scanf("%d %s",&def[i].key,&def[i].others);
+				i++;
+			}while(def[i-1].key!=-1);
+			sign=CreateBiTree(T,def); 
+			if(sign==OK)
+			{
+				printf("您输入的二叉树如下：\n");
+				UITraverse(T);
+				printf("\n");
+				printf("请输入文件名。\n");
+				scanf("%s",&name);
+				printf("正在保存二叉树...\n");
+				SaveBiTree(T,name);
+				printf("二叉树保存成功！\n"); 
+				ClearBiTree(T);
+				printf("正在读入二叉树...\n");
+				LoadBiTree(T,name);
+				printf("二叉树读入成功！\n");
+				printf("读入的二叉树如下：\n");
+				UITraverse(T);
+			}
+			else{printf("关键字重复或无根节点！\n");}
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+		}
+		else//从已有二叉树中选择。 
+		{
+			if(tree_table.len==0)
+			{
+				printf("没有已有二叉树！\n");
+				break;
+			}
+			printf("请输入二叉树的名字。\n");
+			scanf("%s",&name);
+			T=SearchBiTree(tree_table,name);
+			if(T==NULL)
+			{
+				printf("未找到二叉树！\n");
+				break;
+			}
+			printf("您选择的二叉树如下：\n");
+			UITraverse(T);
+			printf("\n");
+			printf("请输入文件名。\n");
+			scanf("%s",&name);
+			printf("正在保存二叉树...\n");
+			SaveBiTree(T,name);
+			printf("二叉树保存成功！\n"); 
+			ClearBiTree(T);
+			printf("正在读入二叉树...\n");
+			LoadBiTree(T,name);
+			printf("二叉树读入成功！\n");
+			printf("读入的二叉树如下：\n");
+			UITraverse(T);
+			printf("本次测评结束。\n"); 
+			ClearBiTree(T);
+			T=NULL;
+		}
+		getchar();getchar();
+		break;
+	   case 0:
+	   	system("pause");
+         break;
+	}//end of switch
+}//end of while
+printf("欢迎下次再使用本系统！\n");
+}//end of main()
